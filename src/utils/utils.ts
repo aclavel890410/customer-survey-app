@@ -11,6 +11,7 @@ export const evaluacionPromedio = (question: SurveyQuestionDto) => {
     let avg = 0;
     question.surveyAssessments?.forEach(assessment => avg += assessment.assessment);
     if (question.surveyAssessments?.length > 0)
-        avg = avg/question.surveyAssessments.length;
-    return puntos.findIndex(punto => avg >= punto.minimo && avg <= punto.maximo) + 1;
+        avg = Number((avg/question.surveyAssessments.length).toFixed(1));
+    const index = puntos.findIndex(punto => avg >= punto.minimo && avg <= punto.maximo) + 1;
+    return index;
 }

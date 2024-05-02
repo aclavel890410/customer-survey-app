@@ -8,7 +8,6 @@ type QuestionItemProps = {
     assessmentHandler: (questionId: string, assessment: 1 | 2 | 3 | 4 | 5) => void
 }
 
-const numbers: (1 | 2 | 3 | 4 | 5)[] = [1, 2, 3, 4, 5]
 
 export const QuestionItem = ({ surveyQuestion, assessmentHandler }: QuestionItemProps) => {
 
@@ -24,8 +23,19 @@ export const QuestionItem = ({ surveyQuestion, assessmentHandler }: QuestionItem
             direction={'column'}
             alignItems={'center'}
             spacing={2}
+            sx={{
+                width: 500
+            }}
         >
-            <Box>
+            <Box
+                sx={{
+                    p: 3,
+                    borderRadius: 2,
+                    border: '1px solid',
+                    borderColor: 'divider',
+                    backgroundColor: 'background.default',
+                }}
+            >
                 <Typography variant="body1" >{surveyQuestion.questionText}</Typography>
             </Box>
             <Stack
@@ -33,14 +43,11 @@ export const QuestionItem = ({ surveyQuestion, assessmentHandler }: QuestionItem
                 alignItems={'center'}
                 spacing={2}
             >
-                {
-                    numbers.map(n => <AssessmentButton key={n} assessment={n} selected={assessment === n} handleClick={() => handleClick(n)} />)
-                }
-                {/* <AssessmentButton key={1} assessment={1} selected={assessment === 1} handleClick={() => handleClick(1)} />
-                <AssessmentButton key={2} assessment={2} selected={assessment === 2} handleClick={() => handleClick(2)} />
-                <AssessmentButton key={3} assessment={3} selected={assessment === 3} handleClick={() => handleClick(3)} />
-                <AssessmentButton key={4} assessment={4} selected={assessment === 4} handleClick={() => handleClick(4)} />
-                <AssessmentButton key={5} assessment={5} selected={assessment === 5} handleClick={() => handleClick(5)} /> */}
+                <AssessmentButton assessment={1} selected={assessment === 1} handleClick={() => handleClick(1)} />
+                <AssessmentButton assessment={2} selected={assessment === 2} handleClick={() => handleClick(2)} />
+                <AssessmentButton assessment={3} selected={assessment === 3} handleClick={() => handleClick(3)} />
+                <AssessmentButton assessment={4} selected={assessment === 4} handleClick={() => handleClick(4)} />
+                <AssessmentButton assessment={5} selected={assessment === 5} handleClick={() => handleClick(5)} />
             </Stack>
         </Stack>
     )

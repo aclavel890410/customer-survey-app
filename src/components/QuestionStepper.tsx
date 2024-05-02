@@ -1,23 +1,24 @@
 import { Box, Button, LinearProgress, Stack } from "@mui/material";
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-import DoDisturbIcon from '@mui/icons-material/DoDisturb';
 import { SurveyQuestion } from "../interfaces/SurveyQuestion";
 import { SurveyAssessment } from "../interfaces/SurveyAssessment";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { QuestionItem } from "./QuestionItem";
+import Carousel from "react-material-ui-carousel";
 
 type QuestionStepperProps = {
     orderId: number;
     questions: SurveyQuestion[],
-    handleCancel: () => void;
     handleFinish: (assessmentList: SurveyAssessment[]) => void;
 }
 
 
-export const QuestionStepper = ({ orderId, questions, handleCancel, handleFinish }: QuestionStepperProps) => {
+export const QuestionStepper = ({ orderId, questions, handleFinish }: QuestionStepperProps) => {
 
     const [assessmentList, setAssessmentList] = useState<SurveyAssessment[]>([]);
+    const [currentPos, setCurrentPos] = useState(0);
+    const slideContainerRef = useRef<HTMLElement>(null)
 
     const sortedQuestions = questions.sort((q1, q2) =>
         q1.sequence < q2.sequence
@@ -26,10 +27,6 @@ export const QuestionStepper = ({ orderId, questions, handleCancel, handleFinish
                 ? 0
                 : 1
     )
-
-
-    const [currentPos, setCurrentPos] = useState(0);
-    const [progress, setProgress] = useState(100 / questions.length);
 
     const assessmentHandler = (questionId: string, assessment: 1 | 2 | 3 | 4 | 5) => {
         setAssessmentList(prevList => {
@@ -46,22 +43,13 @@ export const QuestionStepper = ({ orderId, questions, handleCancel, handleFinish
         })
     }
 
-    const questionItemsList = sortedQuestions.map(question => (
-        <QuestionItem
-            surveyQuestion={question}
-            assessmentHandler={assessmentHandler}
-        />
-    ))
-
     const prevHandler = () => {
         setCurrentPos(prev => prev - 1);
-        setProgress((100 / questions.length) * currentPos);
     }
 
     const nextHandler = () => {
         if (currentPos < questions.length - 1)
             setCurrentPos(prev => prev + 1);
-        setProgress((100 / questions.length) * currentPos);
         if (currentPos === questions.length - 1)
             handleFinish(assessmentList)
     }
@@ -72,31 +60,43 @@ export const QuestionStepper = ({ orderId, questions, handleCancel, handleFinish
             spacing={2}
         >
 
-            <Stack direction={'row'} spacing={2}>
-                {
-                    (() => (
-                        <QuestionItem
-                            surveyQuestion={sortedQuestions[currentPos]}
-                            assessmentHandler={assessmentHandler}
-                        />
-                    ))()
-                }
+            <Box
+                ref={slideContainerRef}
+                sx={{
+                    minWidth: 200,
+                    minHeight: 200
+                }}
+            >
+                <Carousel
+                    index={currentPos}
+                    autoPlay={false}
+                    animation="slide"
+                    swipe={false}
+                    indicators={false}
+                    navButtonsAlwaysInvisible={true}
+                    sx={{
+                        minWidth: 500,
+                        width: 'max-content'
+                    }}
+                >
+                    {
+                        sortedQuestions.map((question, index) => {
+                            return (
+                                <QuestionItem
+                                    key={index}
+                                    surveyQuestion={question}
+                                    assessmentHandler={assessmentHandler}
+                                />
+                            )
+                        })
+                    }
+                </Carousel>
 
-            </Stack>
+            </Box>
             <Box flexGrow={1} sx={{ pt: 2, pb: 2 }} >
                 <LinearProgress variant="determinate" value={(100 / questions.length) * (currentPos)} />
             </Box>
-            <Stack direction={'row'} spacing={2}>
-                <Button
-                    size="small"
-                    variant="contained"
-                    sx={{ textTransform: 'none' }}
-                    startIcon={<DoDisturbIcon />}
-                    onClick={handleCancel}
-                >
-                    Cancelar
-                </Button>
-                <Box flexGrow={1} />
+            <Stack direction={'row'} spacing={2} justifyContent={'flex-end'}>
                 <Button
                     size="small"
                     variant="contained"

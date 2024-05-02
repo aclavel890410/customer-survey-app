@@ -1,4 +1,4 @@
-import { IconButton } from "@mui/material";
+import { IconButton, useMediaQuery } from "@mui/material";
 import { grey } from "@mui/material/colors";
 import { AssessmentIcon } from "./AssessmentIcon";
 
@@ -17,7 +17,7 @@ export const AssessmentButton = ({ assessment, selected, handleClick }: Assessme
             }}
             onClick={() => { handleClick(assessment) }}
         >
-         { <AssessmentIcon assessment={assessment} size={50} /> }   
+            {<AssessmentIcon assessment={assessment} size={50} />}
         </IconButton>
     );
 }

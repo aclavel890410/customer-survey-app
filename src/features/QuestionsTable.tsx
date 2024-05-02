@@ -1,4 +1,4 @@
-import { Add } from "@mui/icons-material";
+import { Add, Edit } from "@mui/icons-material";
 import { Box, Button, FormControl, FormControlLabel, Grid, Stack, Switch, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, useTheme } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useGetAllQuestions } from "../hooks/queries/useGetAllQuestions";
@@ -12,7 +12,6 @@ import { SurveyQuestionDto } from "../interfaces/SurveyQuestionDto";
 import { QuestionListMenu } from "./QuestionListMenu";
 import { evaluacionPromedio } from "../utils/utils";
 import { AssessmentIcon } from "../components/AssessmentIcon";
-import { SurveyPopup } from "../components/SurveyPopup";
 import { QuestionDetailsDialog } from "./QuestionDetailsDialog";
 
 
@@ -24,7 +23,6 @@ export const QuestionsTable = () => {
     const query = useGetAllQuestions(true)
     const deleteMutation = useDeleteQuestion();
     const setActiveMutation = useSetQuestionActive();
-    const [verEncuesta, setVerEncuesta] = useState(false);
     const [dataDetails, setDataDetalis] = useState();
 
     const deleteQuestion = async (questionId: string) => {
@@ -106,16 +104,9 @@ export const QuestionsTable = () => {
                 </TableCell>
                 <TableCell>
                     <Stack direction={'column'} alignItems={'center'} sx={{ width: '100%' }}>
-                        {
-                            (() => {
-                                const avg = evaluacionPromedio(question);
-                                return (
-                                    <Box>
-                                        <AssessmentIcon assessment={avg} size={35} />
-                                    </Box>
-                                );
-                            })()
-                        }
+                        <Box>
+                            <AssessmentIcon assessment={evaluacionPromedio(question)} size={35} />
+                        </Box>
                     </Stack>
                 </TableCell>
                 <TableCell>
@@ -130,22 +121,12 @@ export const QuestionsTable = () => {
     })
 
 
-
     return (
         <>
             <ConfirmDialog ref={confirmRef} />
             {
                 dataDetails &&
                 <QuestionDetailsDialog data={dataDetails} closeFn={() => setDataDetalis(undefined)} />
-            }
-            {
-                verEncuesta &&
-                <SurveyPopup
-                    orderId={500}
-                    title="Hola. ¿Te gustariá responder una pequeña encuesta?"
-                    subTitle="Solo te tomará un momento."
-                    handleClose={() => setVerEncuesta(false)}
-                />
             }
             <Grid container spacing={2} sx={{ mb: 2 }}>
                 <Grid item sm={12} md={3} lg={2}>
@@ -164,8 +145,8 @@ export const QuestionsTable = () => {
                         size="small"
                         sx={{ bgcolor: theme.palette.primary.main, color: 'white', textTransform: 'none' }}
                         variant="contained"
-                        startIcon={<Add />}
-                        onClick={() => setVerEncuesta(true)}
+                        startIcon={<Edit />}
+                        onClick={() => navigate('/survey')}
                     >
                         Ver encuesta
                     </Button>
@@ -188,7 +169,7 @@ export const QuestionsTable = () => {
                                         <TableCell>{`Activada (${activadas})`}</TableCell>
                                         <TableCell>Secuencia</TableCell>
                                         <TableCell>Fecha</TableCell>
-                                        <TableCell>Prom. evaluación</TableCell>
+                                        <TableCell>Evaluación promedio</TableCell>
                                         <TableCell>Acciones</TableCell>
                                     </TableRow>
                                 </TableHead>
